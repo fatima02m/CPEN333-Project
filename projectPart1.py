@@ -113,7 +113,7 @@ class Game():
         self.snakeCoordinates = [(490, 55), (485, 55), (475, 55),
                                  (465, 55), (455, 55)]
         #initial direction of the snake
-        self.direction = None
+        self.direction = "Left"
         self.gameNotOver = True
         self.createNewPrey()
 # IMPLEMENT
@@ -126,10 +126,6 @@ class Game():
             are generated.
         """
         SPEED = 0.15     #speed of snake updates (sec)
-
-        # Wait for the first arrow key press before starting the game loop
-        while self.direction is "Left":
-            time.sleep(0.1)
         
         while self.gameNotOver:
             #complete the method implementation below
@@ -172,28 +168,24 @@ class Game():
 
         self.isGameOver(NewSnakeCoordinates)        # check if new coordinates are out of bound before moving
         
-        print(gui.canvas.coords(gui.preyIcon))
-        print(NewSnakeCoordinates)
+        #print(gui.canvas.coords(gui.preyIcon))
+        #print(NewSnakeCoordinates)
 
         x, y = NewSnakeCoordinates
 
-        if ((x >= gui.canvas.coords(gui.preyIcon)[0] and x <= gui.canvas.coords(gui.preyIcon)[2]) and 
-            (y >= gui.canvas.coords(gui.preyIcon)[1] and y <= gui.canvas.coords(gui.preyIcon)[3])):
-            print("yes it overlaps")
-            self.score += 1
-            self.queue.put({"score": self.score})
-            self.createNewPrey()
-            self.snakeCoordinates.append(NewSnakeCoordinates)
+        if ((x >= gui.canvas.coords(gui.preyIcon)[0] and x <= gui.canvas.coords(gui.preyIcon)[2]) and    # check if snake x coordinates are in between prey coordinates
+            (y >= gui.canvas.coords(gui.preyIcon)[1] and y <= gui.canvas.coords(gui.preyIcon)[3])):      # check if snake y coordinates are in between prey coordinates
+            #print("yes, snake overlaps the prey")
+            self.score += 1                                    # increase score
+            self.queue.put({"score": self.score})              # put task in queue
+            self.createNewPrey()                               # create a new prey
+            self.snakeCoordinates.append(NewSnakeCoordinates)  # add the new coordinates to the snake to make it longer
 
-        
-        else:
+        else:                                                  # else if snake doesn't eat prey (default)
+            self.snakeCoordinates.append(NewSnakeCoordinates)  # append the new coordinates to the snake 
+            del self.snakeCoordinates[0]                       # delete the end of the snake to maintain snake length 
+        self.queue.put({"move": self.snakeCoordinates})        # put 'move' into the queue
 
-            self.snakeCoordinates.append(NewSnakeCoordinates)
-            del self.snakeCoordinates[0]
-            self.queue.put({"move": self.snakeCoordinates})
-
-
-# IMPLEMENT
     def calculateNewCoordinates(self) -> tuple:
         """
             This method calculates and returns the new 
@@ -214,7 +206,7 @@ class Game():
         else:                                                   # down arrow
             new_x, new_y = lastX, lastY + SNAKE_ICON_WIDTH
         
-        return (new_x, new_y)
+        return (new_x, new_y)                                   # returns the new coordinates as a tuple
 
     def isGameOver(self, snakeCoordinates) -> None:
         """
