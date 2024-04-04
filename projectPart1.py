@@ -116,7 +116,7 @@ class Game():
         self.direction = "Left"
         self.gameNotOver = True
         self.createNewPrey()
-# IMPLEMENT
+
     def superloop(self) -> None:
         """
             This method implements a main loop
@@ -149,7 +149,6 @@ class Game():
             return
         self.direction = e.keysym
 
-# IMPLEMENT
     def move(self) -> None:
         """ 
             This method implements what is needed to be done
