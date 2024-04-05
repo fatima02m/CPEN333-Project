@@ -10,6 +10,8 @@ from tkinter.scrolledtext import ScrolledText
 import socket
 import threading
 from multiprocessing import current_process #only needed for getting the current process name
+import time
+import random
 
 class ChatClient:    
     """
@@ -23,11 +25,14 @@ class ChatClient:
         self.name = current_process().name
         self.setup_gui()
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        time.sleep(random.random())
         self.sock.connect(('127.0.0.1', 1024))
-        threading.Thread(target=self.receive_message).start()
+        threading.Thread(target=self.receive_message, daemon=True).start()
 
     def setup_gui(self):
-        label = Label(self.window, text=f"{self.name} @port Fuck")
+        label = Label(self.window, text=f"{self.name} @port Fuck", anchor=W)
+        label.pack()
+        label = Label(self.window, text="Chat history:", anchor=W)
         label.pack()
         self.msg_entry = Entry(self.window)
         self.msg_entry.pack(padx=20, pady=10, fill=X)
