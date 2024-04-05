@@ -6,9 +6,9 @@ import projectPart2_client as client
 import projectPart2_server as server
 
 if __name__ == "__main__":
-    server = multiprocessing.Process(target=server.main)
+    server1 = multiprocessing.Process(target=server.main)
     client1 = multiprocessing.Process(target=client.main, name="Client1")
     client2 = multiprocessing.Process(target=client.main, name="Client2")
-    server.start()
+    server1.start()
     client1.start()
     client2.start()
