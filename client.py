@@ -32,13 +32,10 @@ class ChatClient:
         self.sock.connect(('127.0.0.1', 1024))
         threading.Thread(target=self.receive_message, daemon=True).start() # daemon to True, since there is no join()
 
-        # self.portname = self.sock.getsockname()
-
         self.window = window
         self.setup_gui()
 
     def setup_gui(self):
-        # TODO: rename the port. Figure out how to get the port name from the server side.
         # Port number label
         label = Label(self.window, text=f"{self.name} @port {self.sock.getsockname()[1]}", justify="left", anchor=W)
         label.pack(fill=X, padx=(0, 0))
