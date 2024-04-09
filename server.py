@@ -20,9 +20,9 @@ class ChatServer:
 
     def setup_gui(self):
         label = Label(self.window, text=f"Chat Server", anchor=W)
-        label.pack()
+        label.pack(fill="both")
         label = Label(self.window, text="Chat history:", anchor=W)
-        label.pack()
+        label.pack(fill="both")
         self.text_area = ScrolledText(self.window)
         self.text_area.pack(padx=20, pady=10)
         self.text_area.config(state=DISABLED)
