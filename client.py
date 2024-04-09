@@ -21,10 +21,8 @@ class ChatClient:
     """
     # To implement
     def __init__(self, window: Tk):
-        # Start with all gui setup
-        self.window = window
+        # gui setup
         self.name = current_process().name
-        self.setup_gui()
 
         # TODO When both clients try connecting simultaneously, neither are able to connect
         time.sleep(random.random())
@@ -34,10 +32,15 @@ class ChatClient:
         self.sock.connect(('127.0.0.1', 1024))
         threading.Thread(target=self.receive_message, daemon=True).start() # daemon to True, since there is no join()
 
+        # self.portname = self.sock.getsockname()
+
+        self.window = window
+        self.setup_gui()
+
     def setup_gui(self):
         # TODO: rename the port. Figure out how to get the port name from the server side.
         # Port number label
-        label = Label(self.window, text=f"{self.name} @port Fuck", justify="left", anchor=W)
+        label = Label(self.window, text=f"{self.name} @port {self.sock.getsockname()[1]}", justify="left", anchor=W)
         label.pack(fill=X, padx=(0, 0))
 
         # Chat message + entry frame
@@ -60,7 +63,7 @@ class ChatClient:
         # Scrolling text box
         self.text_area = ScrolledText(self.window)
         self.text_area.pack(padx=20, pady=10, fill=X)
-        self.text_area.config(state=DISABLED)
+        self.text_area.config(state=DISABLED) # Deny any changes
 
     def send_message(self, event):
         message = self.msg_entry.get() # Takes the string from the text entry box
@@ -72,8 +75,11 @@ class ChatClient:
         # Continually check for a message from the server
         # Once it receves the message, decode it + display it in the scrolling text box.
         while True:
-            message = self.sock.recv(1024).decode()
-            self.display_message(message)
+            try:
+                message = self.sock.recv(1024).decode()
+                self.display_message(message)
+            except:
+                self.sock.close()
 
     def display_message(self, message, sent = 0):
         self.text_area.config(state=NORMAL) # Enable editing in the scrolling text box

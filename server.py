@@ -10,56 +10,75 @@ from tkinter.scrolledtext import ScrolledText
 
 class ChatServer:
     def __init__(self, window):
+        # Set up tkinter gui
         self.window = window
-        self.clients = []
+        self.clients: list[socket.socket] = [] # list of currently clients connected
         self.setup_gui()
+
+        # Set up the server socket
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind(('127.0.0.1', 1024))
         self.server_socket.listen()
-        threading.Thread(target=self.accept_connections, daemon=True).start()
+
+        # Start a thread to accept any new connections
+        threading.Thread(target=self.accept_connections, daemon=True).start() # Daemon so that it closes when the program ends
 
     def setup_gui(self):
+        # Server and Chat History labels
         label = Label(self.window, text=f"Chat Server", anchor=W)
         label.pack(fill="both")
         label = Label(self.window, text="Chat history:", anchor=W)
         label.pack(fill="both")
+
+        # scrolling textbox
         self.text_area = ScrolledText(self.window)
         self.text_area.pack(padx=20, pady=10)
-        self.text_area.config(state=DISABLED)
+        self.text_area.config(state=DISABLED) # Deny any changes
 
     def accept_connections(self):
+        # Continuously checks for if any clients request a connection
+        # Starts a new thread for each client to manage incoming/outgoing messages
         while True:
             client_socket, addr = self.server_socket.accept()
             self.clients.append(client_socket)
             threading.Thread(target=self.handle_client, args=(client_socket, addr), daemon=True).start()
 
-    def handle_client(self, client_socket, addr):
+    def handle_client(self, client_socket: socket.socket, addr):
+        # If the client disconnects, remove the client.
         while True:
             try:
+                # Continuously checks a client socket for incoming message, decode it when it comes in
                 message = client_socket.recv(1024).decode()
+                
+                # Once a message is received, display it, and broadcast it to the other client sockets
                 if message:
                     self.display_message(f"{addr}: {message}")
-                    self.broadcast_message(message, client_socket)
+
+                    for client in self.clients:
+                        if client is not client_socket:
+                            try:
+                                client.send(message.encode())
+
+                            # If the client can't be reached, remove the client
+                            except:
+                                self.remove_client(client)
+
+                # If the client disconnects, remove the client.
                 else:
                     self.remove_client(client_socket)
                     break
-            except Exception as e:
+            except:
                 self.remove_client(client_socket)
                 break
 
-    def broadcast_message(self, message, sender_socket):
-        for client in self.clients:
-            if client is not sender_socket:
-                try:
-                    client.send(message.encode())
-                except:
-                    self.remove_client(client)
-
-    def remove_client(self, client_socket):
+    def remove_client(self, client_socket: socket.socket):
+        # Closes the client socket and removes it from the client list
         if client_socket in self.clients:
+            client_socket.close()
             self.clients.remove(client_socket)
 
     def display_message(self, message):
+        # Print received messages onto the scrolling textbox
         self.text_area.config(state=NORMAL)
         self.text_area.insert(END, message + '\n')
         self.text_area.config(state=DISABLED)
