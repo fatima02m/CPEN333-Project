@@ -110,8 +110,8 @@ class Game():
         #starting length and location of the snake
         #note that it is a list of tuples, each being an
         # (x, y) tuple. Initially its size is 5 tuples.       
-        self.snakeCoordinates = [(490, 55), (485, 55), (475, 55),
-                                 (465, 55), (455, 55)]
+        self.snakeCoordinates = [(495, 60), (480, 60), (465, 60),
+                                 (450, 60), (435, 60)] #TODO: Given code has snake not aligned for some reason
         #initial direction of the snake
         self.direction = "Left"
         self.gameNotOver = True
@@ -239,10 +239,13 @@ class Game():
         THRESHOLD = 15   #sets how close prey can be to borders
 
         #complete the method implementation below
-        x = random.randint((THRESHOLD),(WINDOW_WIDTH - THRESHOLD))      # create random x coordinate in the threshold boundaries
-        y = random.randint((THRESHOLD),(WINDOW_HEIGHT - THRESHOLD))     # create random x coordinate in the threshold boundaries
-        
-        preyCoordinates = (x, y, x + PREY_ICON_WIDTH, y + PREY_ICON_WIDTH)      # sets the rectangle coordiantes with specified prey width
+
+        x = random.randint((THRESHOLD//SNAKE_ICON_WIDTH),((WINDOW_WIDTH - THRESHOLD)//SNAKE_ICON_WIDTH)) * SNAKE_ICON_WIDTH      # create random x coordinate in the threshold boundaries
+        y = random.randint((THRESHOLD//SNAKE_ICON_WIDTH),((WINDOW_HEIGHT - THRESHOLD)//SNAKE_ICON_WIDTH)) * SNAKE_ICON_WIDTH     # create random x coordinate in the threshold boundaries
+
+        offset = PREY_ICON_WIDTH / 2.
+
+        preyCoordinates = (x-offset, y-offset, x+offset, y+offset)      # sets the rectangle coordiantes with specified prey width
         self.queue.put({"prey": preyCoordinates})
 
 

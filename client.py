@@ -103,6 +103,7 @@ def main():
     window = Tk()
     c = ChatClient(window)
     window.mainloop()
+    print(c.name, "HAS CLOSED")
 
 if __name__ == '__main__': # May be used ONLY for debugging
     main()
