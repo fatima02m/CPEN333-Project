@@ -74,9 +74,20 @@ class ChatClient:
         while True:
             try:
                 message = self.sock.recv(1024).decode()
-                self.display_message(message)
+                if message:
+                    self.display_message(message)
+                
+                # If the server disconnects, close the socket
+                else:
+                    message = "Connection to server lost"
+                    self.display_message(message)
+                    self.sock.close()
+                    break
             except:
+                message = "Connection to server lost"
+                self.display_message(message)
                 self.sock.close()
+                break
 
     def display_message(self, message, sent = 0):
         self.text_area.config(state=NORMAL) # Enable editing in the scrolling text box

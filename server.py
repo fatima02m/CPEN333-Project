@@ -16,9 +16,9 @@ class ChatServer:
         self.setup_gui()
 
         # Set up the server socket
-        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind(('127.0.0.1', 1024))
-        self.server_socket.listen()
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.bind(('127.0.0.1', 1024))
+        self.sock.listen()
 
         # Start a thread to accept any new connections
         threading.Thread(target=self.accept_connections, daemon=True).start() # Daemon so that it closes when the program ends
@@ -39,7 +39,7 @@ class ChatServer:
         # Continuously checks for if any clients request a connection
         # Starts a new thread for each client to manage incoming/outgoing messages
         while True:
-            client_socket, addr = self.server_socket.accept()
+            client_socket, addr = self.sock.accept()
             self.clients.append(client_socket)
             threading.Thread(target=self.handle_client, args=(client_socket, addr), daemon=True).start()
 
@@ -73,7 +73,12 @@ class ChatServer:
 
     def remove_client(self, client_socket: socket.socket):
         # Closes the client socket and removes it from the client list
+
         if client_socket in self.clients:
+            message = str(client_socket.getsockname())
+            message = "Connection lost with " + message + ". Removing from client list"
+            self.display_message(message)
+
             client_socket.close()
             self.clients.remove(client_socket)
 
