@@ -240,8 +240,14 @@ class Game():
 
         #complete the method implementation below
 
+        exclusion_zone = self.snakeCoordinates + [(60, 15), (75, 15), (90, 15), (105, 15), (120, 15)]
+
         x = random.randint((THRESHOLD//SNAKE_ICON_WIDTH),((WINDOW_WIDTH - THRESHOLD)//SNAKE_ICON_WIDTH)) * SNAKE_ICON_WIDTH      # create random x coordinate in the threshold boundaries
         y = random.randint((THRESHOLD//SNAKE_ICON_WIDTH),((WINDOW_HEIGHT - THRESHOLD)//SNAKE_ICON_WIDTH)) * SNAKE_ICON_WIDTH     # create random x coordinate in the threshold boundaries
+
+        while (x, y) in exclusion_zone:
+            x = random.randint((THRESHOLD//SNAKE_ICON_WIDTH),((WINDOW_WIDTH - THRESHOLD)//SNAKE_ICON_WIDTH)) * SNAKE_ICON_WIDTH      # create random x coordinate in the threshold boundaries
+            y = random.randint((THRESHOLD//SNAKE_ICON_WIDTH),((WINDOW_HEIGHT - THRESHOLD)//SNAKE_ICON_WIDTH)) * SNAKE_ICON_WIDTH     # create random x coordinate in the threshold boundaries
 
         offset = PREY_ICON_WIDTH / 2.
 
