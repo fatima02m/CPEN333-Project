@@ -110,8 +110,8 @@ class Game():
         #starting length and location of the snake
         #note that it is a list of tuples, each being an
         # (x, y) tuple. Initially its size is 5 tuples.       
-        self.snakeCoordinates = [(495, 60), (480, 60), (465, 60),
-                                 (450, 60), (435, 60)] #TODO: Given code has snake not aligned for some reason
+        self.snakeCoordinates = [(495, 60), (485, 60), (475, 60),
+                                 (465, 60), (455, 60)] #TODO: Given code has snake not aligned for some reason
         #initial direction of the snake
         self.direction = "Left"
         self.gameNotOver = True
