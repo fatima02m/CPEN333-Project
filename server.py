@@ -13,17 +13,17 @@ class ChatServer:
         # Set up tkinter gui
         self.window = window
         self.clients: list[socket.socket] = [] # list of currently clients connected
-        self.setup_gui()
+        self.gui()
 
         # Set up the server socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.bind(('127.0.0.1', 1024))
+        self.sock.bind(('127.0.0.1', 1025))
         self.sock.listen()
 
         # Start a thread to accept any new connections
         threading.Thread(target=self.accept_connections, daemon=True).start() # Daemon so that it closes when the program ends
 
-    def setup_gui(self):
+    def gui(self):
         # Server and Chat History labels
         label = Label(self.window, text=f"Chat Server", anchor=W)
         label.pack(fill="both")
@@ -75,7 +75,7 @@ class ChatServer:
         # Closes the client socket and removes it from the client list
 
         if client_socket in self.clients:
-            message = str(client_socket.getsockname())
+            message = str(client_socket.getpeername())
             message = "Connection lost with " + message + ". Removing from client list"
             self.display_message(message)
 
