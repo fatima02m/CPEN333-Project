@@ -110,8 +110,8 @@ class Game():
         #starting length and location of the snake
         #note that it is a list of tuples, each being an
         # (x, y) tuple. Initially its size is 5 tuples.       
-        self.snakeCoordinates = [(495, 60), (485, 60), (475, 60),
-                                 (465, 60), (455, 60)] #TODO: Given code has snake not aligned for some reason
+        self.snakeCoordinates = [(490, 60), (480, 60), (470, 60),
+                                 (460, 60), (450, 60)]
         #initial direction of the snake
         self.direction = "Left"
         self.gameNotOver = True
@@ -245,6 +245,7 @@ class Game():
         x = random.randint((THRESHOLD//SNAKE_ICON_WIDTH),((WINDOW_WIDTH - THRESHOLD)//SNAKE_ICON_WIDTH)) * SNAKE_ICON_WIDTH      # create random x coordinate in the threshold boundaries
         y = random.randint((THRESHOLD//SNAKE_ICON_WIDTH),((WINDOW_HEIGHT - THRESHOLD)//SNAKE_ICON_WIDTH)) * SNAKE_ICON_WIDTH     # create random x coordinate in the threshold boundaries
 
+        # Keep generating points until the point is not in the exclusion zone:
         while (x, y) in exclusion_zone:
             x = random.randint((THRESHOLD//SNAKE_ICON_WIDTH),((WINDOW_WIDTH - THRESHOLD)//SNAKE_ICON_WIDTH)) * SNAKE_ICON_WIDTH      # create random x coordinate in the threshold boundaries
             y = random.randint((THRESHOLD//SNAKE_ICON_WIDTH),((WINDOW_HEIGHT - THRESHOLD)//SNAKE_ICON_WIDTH)) * SNAKE_ICON_WIDTH     # create random x coordinate in the threshold boundaries
