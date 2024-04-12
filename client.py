@@ -24,8 +24,11 @@ class ChatClient:
         # Connect to the server, and continually check the socket for received messages in a thread.
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+        # Persistently try to connect to server
         successful_connection = False
         while not successful_connection:
+            # If the socket can't connect because other clients are trying, connection refused exception is thrown
+            # If that happens, reset the socket and try again.
             try:
                 self.sock.connect(('127.0.0.1', 1024)) # not all clients connect when using 1024 or 1025
                 successful_connection = 1
