@@ -6,7 +6,6 @@
 from tkinter import *
 import socket
 import threading
-from tkinter.scrolledtext import ScrolledText
 
 class ChatServer:
     def __init__(self, window):
@@ -17,7 +16,7 @@ class ChatServer:
 
         # Set up the server socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.bind(('127.0.0.1', 1025))
+        self.sock.bind(('127.0.0.1', 1024)) # not all clients connect when using 1024 or 1025
         self.sock.listen()
 
         # Start a thread to accept any new connections
@@ -30,10 +29,14 @@ class ChatServer:
         label = Label(self.window, text="Chat history:", anchor=W)
         label.pack(fill="both")
 
-        # scrolling textbox
-        self.text_area = ScrolledText(self.window)
-        self.text_area.pack(padx=20, pady=10)
-        self.text_area.config(state=DISABLED) # Deny any changes
+        # Create Scrollbar, associate it with a Text widget
+        self.text_area = Text(self.window, height=10, state=DISABLED)
+        self.text_area.pack(side=LEFT, padx=20, pady=10, fill=X, expand=True)
+        
+        scrollbar = Scrollbar(self.window, command=self.text_area.yview)
+        scrollbar.pack(side=LEFT, fill=Y)
+        
+        self.text_area['yscrollcommand'] = scrollbar.set
 
     def accept_connections(self):
         # Continuously checks for if any clients request a connection

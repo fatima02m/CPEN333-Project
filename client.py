@@ -6,14 +6,11 @@
 JUSTIFICATION = 40
 
 from tkinter import *
-from tkinter.scrolledtext import ScrolledText
 import socket
 import threading
 from multiprocessing import current_process #only needed for getting the current process name
-import time
-import random
 
-class ChatClient:    
+class ChatClient:
     """
     This class implements the chat client.
     It uses the socket module to create a TCP socket and to connect to the server.
@@ -24,12 +21,19 @@ class ChatClient:
         # gui setup
         self.name = current_process().name
 
-        # TODO When both clients try connecting simultaneously, neither are able to connect
-        time.sleep(random.random())
-
         # Connect to the server, and continually check the socket for received messages in a thread.
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.connect(('127.0.0.1', 1025))
+
+        successful_connection = False
+        while not successful_connection:
+            try:
+                self.sock.connect(('127.0.0.1', 1024)) # not all clients connect when using 1024 or 1025
+                successful_connection = 1
+            except ConnectionRefusedError as e:
+                successful_connection = 0
+                self.sock.close()
+                self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
         threading.Thread(target=self.receive_message, daemon=True).start() # daemon to True, since there is no join()
 
         self.window = window
@@ -57,10 +61,14 @@ class ChatClient:
         label = Label(self.window, text="Chat history:", anchor=W)
         label.pack(fill=X)
 
-        # Scrolling text box
-        self.text_area = ScrolledText(self.window)
-        self.text_area.pack(padx=20, pady=10, fill=X)
-        self.text_area.config(state=DISABLED) # Deny any changes
+        # Create Scrollbar, associate it with a Text widget
+        self.text_area = Text(self.window, height=10, state=DISABLED)
+        self.text_area.pack(side=LEFT, padx=20, pady=10, fill=X, expand=True)
+        
+        scrollbar = Scrollbar(self.window, command=self.text_area.yview)
+        scrollbar.pack(side=LEFT, fill=Y)
+        
+        self.text_area['yscrollcommand'] = scrollbar.set
 
     def send_message(self, event):
         message = self.msg_entry.get() # Takes the string from the text entry box
